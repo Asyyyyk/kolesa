@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Management System</title>
+    <style>
+        body {
+            background-color: #f4f4f4;
+            color: #333;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        h1 {
+            color: #444;
+            text-align: center;
+        }
+
+        table {
+            margin: 20px auto;
+            width: 80%;
+            border-collapse: collapse;
+            background-color: #ffffff;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ccc;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-gray {
+            background-color: #6c757d;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn-gray:hover {
+            background-color: #5a6268;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .pagination a {
+            margin: 0 5px;
+            padding: 10px 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-decoration: none;
+            background-color: #f0f0f0;
+        }
+
+        .pagination a:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .pagination .current-page {
+            background-color: #007bff;
+            color: white;
+            pointer-events: none;
+        }
+
+        form {
+            margin: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input[type="text"] {
+            width: 300px; /* Увеличено шире */
+            padding: 8px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        select, button {
+            padding: 8px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <h1>Catalog</h1>
+
+    <form method="get" action="/tasks">
+        <input type="text" name="title" placeholder="Search by title" th:value="${title}">
+        <select name="categoryId">
+            <option value="" th:selected="${categoryId == null}">All Categories</option>
+            <option value="1" th:selected="${categoryId == 1}">Passenger car</option>
+            <option value="2" th:selected="${categoryId == 2}">Cargo</option>
+        </select>
+        <button type="submit" class="btn">Search</button>
+    </form>
+
+    <a href="/tasks/new" class="btn">New Car</a>
+
+    <table th:if="${taskPage != null}">
+        <thead>
+        <tr>
+            <th>Car ID</th>
+            <th>Car Brand</th>
+            <th>Description</th>
+            <th>Due Date</th>
+            <th>Status</th>
+            <th>Priority</th>
+            <th>Category</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="task : ${taskPage.content}">
+            <td th:text="${task.id}">Default ID</td>
+            <td th:text="${task.title}">Default Title</td>
+            <td th:text="${task.description}">Default Description</td>
+            <td th:text="${task.dueDate}">Default Due Date</td>
+            <td th:text="${task.status}">Default Status</td>
+            <td th:text="${task.priority}">Default Priority</td>
+            <td th:text="${task.category.name}">Default Category</td>
+            <!-- Кнопка для удаления -->
+            <td>
+                <a href="/tasks/delete/{task.id}" th:href="@{/tasks/delete/{taskId}(taskId=${task.id})}">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <p th:if="${#lists.isEmpty(taskPage.content)}">No cars found.</p>
+
+    <!-- Пагинация -->
+    <div class="pagination" th:if="${totalPages > 1}">
+        <a th:if="${currentPage > 0}"
+           th:href="@{/tasks(page=${currentPage - 1}, size=${size}, title=${title}, categoryId=${categoryId})}">
+            Previous
+        </a>
+
+        <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+            <a th:href="@{/tasks(page=${i}, size=${size}, title=${title}, categoryId=${categoryId})}"
+               th:text="${i + 1}"
+               th:classappend="${i == currentPage} ? 'current-page' : ''"></a>
+        </span>
+
+        <a th:if="${currentPage < totalPages - 1}"
+           th:href="@{/tasks(page=${currentPage + 1}, size=${size}, title=${title}, categoryId=${categoryId})}">
+            Next
+        </a>
+    </div>
+
+    <a href="/main" class="btn-gray">Back to Profile</a>
+</div>
+</body>
+</html>

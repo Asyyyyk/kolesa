@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <style>
+        body {
+            background-color: #f4f4f4;
+            color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        h1 {
+            color: #f0f0f0;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 5px #000;
+        }
+
+        .main-container {
+            text-align: center;
+        }
+
+        .main-btn {
+            background-color: #4a4a4a;
+            color: #ffffff;
+            border: none;
+            padding: 20px 40px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 10px;
+            margin: 15px;
+            transition: all 0.3s ease;
+            width: 300px;
+        }
+
+        .main-btn:hover {
+            background-color: #6a6a6a;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .logout-btn {
+            background-color: #d9534f; /* Красная кнопка для выхода */
+        }
+
+        .logout-btn:hover {
+            background-color: #c9302c;
+        }
+    </style>
+</head>
+<body>
+<div class="main-container">
+    <h1>Welcome, <span th:text="${user.name}">User</span></h1>
+
+    <button class="main-btn" onclick="redirectTo('/profile')">My Profile</button>
+    <button class="main-btn" onclick="redirectTo('/tasks')">Cars</button>
+    <button class="main-btn logout-btn" onclick="confirmLogout()">Log Out</button>
+</div>
+
+<script>
+    function redirectTo(url) {
+        window.location.href = url; // Перенаправление на указанную страницу
+    }
+
+    function confirmLogout() {
+        if (confirm("Are you sure you want to log out?")) {
+            window.location.href = '/logout'; // Перенаправление на страницу выхода
+        }
+    }
+
+    // Автоматический logout после 30 секунд бездействия
+    var idleTime = 0; // Время бездействия (в миллисекундах)
+    var idleLimit = 30000; // Лимит бездействия (30 секунд)
+
+    function resetIdleTime() {
+        idleTime = 0; // Сброс времени бездействия
+    }
+
+    function checkIdleTime() {
+        idleTime += 1000; // Увеличиваем таймер каждые 1 секунду
+        if (idleTime >= idleLimit) {
+            alert("You were logged out due to inactivity.");
+            window.location.href = "/login"; // Перенаправление на страницу логина
+        }
+    }
+
+    window.onload = function () {
+        setInterval(checkIdleTime, 1000);
+
+        window.onmousemove = resetIdleTime;
+        window.onkeydown = resetIdleTime;
+        window.onclick = resetIdleTime;
+    };
+</script>
+</body>
+</html>
+
